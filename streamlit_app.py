@@ -140,7 +140,7 @@ st.divider()
 
 # Sidebar filters
 with st.sidebar:
-    st.image("https://via.placeholder.com/200x80/1a365d/ffffff?text=SQN+Trust", use_container_width=True)
+    st.image("https://via.placeholder.com/200x80/1a365d/ffffff?text=SQN+Trust", use_column_width=True)
     
     st.markdown("### Filters")
     
@@ -359,11 +359,13 @@ with tab2:
         
         # Full holdings table
         st.markdown(f"#### {t('all_assets', lang)}")
+        
+        # Select only available columns
+        display_cols = ['asset_name', 'asset_type', 'valuation_current', 'last_valuation_date']
+        available_cols = [col for col in display_cols if col in filtered_holdings.columns]
+        
         st.dataframe(
-            filtered_holdings[[
-                'asset_name', 'asset_type', 'quantity', 
-                'valuation_current', 'last_valuation_date'
-            ]],
+            filtered_holdings[available_cols],
             use_container_width=True,
             hide_index=True
         )
