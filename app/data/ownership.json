@@ -1,0 +1,76 @@
+{
+  "companies": [
+    {
+      "name": "KovacsTrust Holding Zrt.",
+      "ownership_percentage": 100.0,
+      "type": "Holding",
+      "country": "HU",
+      "value_eur": 8500000,
+      "description": "Main holding company"
+    },
+    {
+      "name": "KT Property Management Kft.",
+      "ownership_percentage": 85.0,
+      "type": "Real Estate",
+      "country": "HU",
+      "value_eur": 2200000,
+      "description": "Property management subsidiary"
+    },
+    {
+      "name": "Central European Ventures GmbH",
+      "ownership_percentage": 60.0,
+      "type": "Investment",
+      "country": "AT",
+      "value_eur": 1500000,
+      "description": "Austrian investment vehicle"
+    },
+    {
+      "name": "Tech Innovators Fund LP",
+      "ownership_percentage": 45.0,
+      "type": "VC Fund",
+      "country": "US",
+      "value_eur": 850000,
+      "description": "Technology venture capital fund"
+    },
+    {
+      "name": "Budapest Retail Holdings Kft.",
+      "ownership_percentage": 35.0,
+      "type": "Retail",
+      "country": "HU",
+      "value_eur": 680000,
+      "description": "Retail property investments"
+    },
+    {
+      "name": "Green Energy Partners s.r.o.",
+      "ownership_percentage": 25.0,
+      "type": "Energy",
+      "country": "CZ",
+      "value_eur": 420000,
+      "description": "Renewable energy investments"
+    },
+    {
+      "name": "MedTech Innovations AG",
+      "ownership_percentage": 18.0,
+      "type": "Healthcare",
+      "country": "CH",
+      "value_eur": 320000,
+      "description": "Medical technology startup"
+    },
+    {
+      "name": "FinServ Digital Kft.",
+      "ownership_percentage": 12.0,
+      "type": "Fintech",
+      "country": "HU",
+      "value_eur": 180000,
+      "description": "Digital banking services"
+    },
+    {
+      "name": "Logistics Central Europe Sp. z o.o.",
+      "ownership_percentage": 8.0,
+      "type": "Logistics",
+      "country": "PL",
+      "value_eur": 95000,
+      "description": "Logistics and warehousing"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "CLT-2024-001",
+  "name": "KovacsTrust Kft.",
+  "risk_profile": "Balanced",
+  "base_currency": "EUR",
+  "relationship_start_date": "2021-03-15",
+  "target_allocation": {
+    "Shares": 0.55,
+    "RealEstate": 0.25,
+    "Liquid": 0.2
+  }
+}

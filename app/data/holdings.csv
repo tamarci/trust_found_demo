@@ -1,0 +1,50 @@
+account_id,asset_type,asset_name,region,sector,property_type,city,country,valuation_current,valuation_cost_basis,last_valuation_date,liquidity,risk_level,volatility
+ACC-001,Shares,ASML Holding NV,EU,Technology,,,NL,285000,220000,2025-12-31,Moderate,Medium,0.255
+ACC-001,Shares,LVMH Moët Hennessy,EU,Consumer Discretionary,,,FR,195000,165000,2025-12-31,Large,Medium,0.295
+ACC-001,Shares,SAP SE,EU,Technology,,,DE,142000,125000,2025-12-31,Moderate,Medium,0.385
+ACC-001,Shares,Siemens AG,EU,Industrials,,,DE,118000,98000,2025-12-31,Moderate,Medium,0.163
+ACC-001,Shares,TotalEnergies SE,EU,Energy,,,FR,95000,82000,2025-12-31,Large,Medium,0.154
+ACC-001,Shares,Novo Nordisk A/S,EU,Healthcare,,,DK,210000,145000,2025-12-31,Large,Low,0.151
+ACC-001,Shares,L'Oréal SA,EU,Consumer Staples,,,FR,88000,75000,2025-12-31,Large,Low,0.172
+ACC-001,Shares,Adidas AG,EU,Consumer Discretionary,,,DE,52000,68000,2025-12-31,Moderate,High,0.294
+ACC-001,Shares,Infineon Technologies,EU,Technology,,,DE,67000,58000,2025-12-31,Moderate,High,0.412
+ACC-001,Shares,Deutsche Telekom,EU,Communication,,,DE,45000,42000,2025-12-31,Large,Medium,0.264
+ACC-002,Shares,Apple Inc.,US,Technology,,,US,320000,245000,2025-12-31,Large,High,0.318
+ACC-002,Shares,Microsoft Corporation,US,Technology,,,US,295000,210000,2025-12-31,Large,Medium,0.441
+ACC-002,Shares,Amazon.com Inc.,US,Consumer Discretionary,,,US,185000,165000,2025-12-31,Large,Medium,0.269
+ACC-002,Shares,NVIDIA Corporation,US,Technology,,,US,420000,180000,2025-12-31,Large,High,0.419
+ACC-002,Shares,Alphabet Inc.,US,Communication,,,US,175000,145000,2025-12-31,Moderate,Medium,0.19
+ACC-002,Shares,Meta Platforms Inc.,US,Communication,,,US,145000,95000,2025-12-31,Large,Medium,0.259
+ACC-002,Shares,Tesla Inc.,US,Consumer Discretionary,,,US,125000,155000,2025-12-31,Moderate,Medium,0.445
+ACC-002,Shares,Johnson & Johnson,US,Healthcare,,,US,98000,88000,2025-12-31,Large,Low,0.155
+ACC-002,Shares,JPMorgan Chase & Co.,US,Financials,,,US,115000,95000,2025-12-31,Moderate,Medium,0.243
+ACC-002,Shares,Visa Inc.,US,Financials,,,US,92000,78000,2025-12-31,Large,Medium,0.237
+ACC-002,Shares,Procter & Gamble Co.,US,Consumer Staples,,,US,72000,65000,2025-12-31,Moderate,Low,0.105
+ACC-002,Shares,UnitedHealth Group,US,Healthcare,,,US,135000,115000,2025-12-31,Large,Medium,0.199
+ACC-002,Shares,Mastercard Inc.,US,Financials,,,US,88000,72000,2025-12-31,Large,Medium,0.28
+ACC-002,Shares,Eli Lilly and Co.,US,Healthcare,,,US,165000,95000,2025-12-31,Large,Medium,0.145
+ACC-002,Shares,Berkshire Hathaway,US,Financials,,,US,142000,125000,2025-12-31,Large,Medium,0.174
+ACC-001,Shares,Taiwan Semiconductor,Global,Technology,,,TW,185000,142000,2025-12-31,Large,Medium,0.384
+ACC-001,Shares,Samsung Electronics,Global,Technology,,,KR,125000,108000,2025-12-31,Moderate,Medium,0.372
+ACC-001,Shares,Toyota Motor Corp.,Global,Consumer Discretionary,,,JP,78000,72000,2025-12-31,Large,Medium,0.283
+ACC-001,Shares,Nestlé SA,Global,Consumer Staples,,,CH,95000,88000,2025-12-31,Large,Medium,0.199
+ACC-001,Shares,Roche Holding AG,Global,Healthcare,,,CH,110000,98000,2025-12-31,Moderate,Low,0.168
+ACC-003,RealEstate,Andrássy Apartment Complex,HU,,Residential,Budapest,HU,850000,620000,2025-09-30,Small,Low,0.132
+ACC-003,RealEstate,Munich Office Building,EU,,Commercial,Munich,DE,1250000,980000,2025-09-30,Small,Medium,0.077
+ACC-003,RealEstate,Vienna Retail Space,EU,,Retail,Vienna,AT,680000,550000,2025-09-30,Small,Medium,0.071
+ACC-003,RealEstate,Prague Mixed-Use,EU,,Mixed-Use,Prague,CZ,520000,420000,2025-09-30,Small,Medium,0.138
+ACC-003,RealEstate,Budapest District V Office,HU,,Commercial,Budapest,HU,720000,580000,2025-09-30,Moderate,Medium,0.064
+ACC-003,RealEstate,Berlin Residential Block,EU,,Residential,Berlin,DE,980000,750000,2025-09-30,Small,Low,0.124
+ACC-003,RealEstate,Warehouse Logistics Park,HU,,Industrial,Győr,HU,450000,380000,2025-09-30,Moderate,Medium,0.125
+ACC-004,Liquid,EUR Cash Reserve,EU,,,,,420000,420000,2025-12-31,Large,Low,0.027
+ACC-004,Liquid,USD Cash Reserve,US,,,,US,185000,185000,2025-12-31,Large,Low,0.033
+ACC-004,Liquid,HUF Money Market Fund,HU,,,,HU,125000,122000,2025-12-31,Large,Low,0.024
+ACC-004,Liquid,EUR Government Bonds (Short),EU,,,,,350000,345000,2025-12-31,Large,Low,0.05
+ACC-005,Shares,Private Equity Fund I,Global,Alternative,,,,280000,250000,2025-12-31,Small,Medium,0.178
+ACC-005,Shares,Venture Capital Tech Fund,US,Alternative,,,US,150000,175000,2025-12-31,Small,High,0.249
+ACC-005,Shares,Infrastructure Fund EU,EU,Alternative,,,,220000,200000,2025-12-31,Small,Medium,0.301
+ACC-005,Liquid,Hedge Fund Multi-Strategy,Global,,,,,180000,165000,2025-12-31,Moderate,Medium,0.322
+ACC-005,Liquid,Commodities Basket,Global,,,,,95000,88000,2025-12-31,Moderate,Medium,0.181
+ACC-001,Shares,OTP Bank Nyrt.,HU,Financials,,,HU,145000,125000,2025-12-31,Large,Medium,0.269
+ACC-001,Shares,MOL Group,HU,Energy,,,HU,88000,75000,2025-12-31,Large,Medium,0.208
+ACC-001,Shares,Richter Gedeon,HU,Healthcare,,,HU,72000,65000,2025-12-31,Moderate,Medium,0.153

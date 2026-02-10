@@ -1,0 +1,6 @@
+account_id,account_name,custodian,account_currency
+ACC-001,Main Brokerage,UBS Wealth Management,EUR
+ACC-002,US Equity Portfolio,Interactive Brokers,USD
+ACC-003,Real Estate Holdings,Credit Suisse,EUR
+ACC-004,Cash & Reserves,OTP Private Banking,HUF
+ACC-005,Alternative Investments,Goldman Sachs,EUR

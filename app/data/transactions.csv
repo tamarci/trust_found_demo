@@ -1,0 +1,133 @@
+account_id,date,type,amount,asset_name
+ACC-002,2024-01-01,buy,145000,Alphabet Inc.
+ACC-003,2024-01-01,buy,980000,Munich Office Building
+ACC-001,2024-01-03,buy,165000,LVMH Moët Hennessy
+ACC-003,2024-01-05,buy,750000,Berlin Residential Block
+ACC-004,2024-01-15,buy,345000,EUR Government Bonds (Short)
+ACC-001,2024-01-18,buy,125000,OTP Bank Nyrt.
+ACC-005,2024-01-21,buy,200000,Infrastructure Fund EU
+ACC-005,2024-01-22,buy,165000,Hedge Fund Multi-Strategy
+ACC-002,2024-01-28,buy,78000,Visa Inc.
+ACC-003,2024-01-29,buy,380000,Warehouse Logistics Park
+ACC-001,2024-01-29,buy,42000,Deutsche Telekom
+ACC-001,2024-01-30,buy,98000,Siemens AG
+ACC-001,2024-02-02,buy,65000,Richter Gedeon
+ACC-001,2024-02-09,buy,108000,Samsung Electronics
+ACC-002,2024-02-10,buy,165000,Amazon.com Inc.
+ACC-001,2024-02-11,buy,88000,Nestlé SA
+ACC-002,2024-02-15,buy,88000,Johnson & Johnson
+ACC-001,2024-02-20,buy,142000,Taiwan Semiconductor
+ACC-005,2024-03-02,buy,250000,Private Equity Fund I
+ACC-004,2024-03-02,buy,122000,HUF Money Market Fund
+ACC-002,2024-03-08,buy,95000,Meta Platforms Inc.
+ACC-001,2024-03-09,buy,75000,L'Oréal SA
+ACC-002,2024-03-16,buy,245000,Apple Inc.
+ACC-002,2024-03-17,buy,115000,UnitedHealth Group
+ACC-004,2024-03-19,buy,185000,USD Cash Reserve
+ACC-003,2024-03-23,buy,420000,Prague Mixed-Use
+ACC-001,2024-03-28,buy,58000,Infineon Technologies
+ACC-004,2024-04-02,buy,420000,EUR Cash Reserve
+ACC-001,2024-04-05,buy,72000,Toyota Motor Corp.
+ACC-002,2024-04-21,buy,210000,Microsoft Corporation
+ACC-002,2024-04-26,buy,180000,NVIDIA Corporation
+ACC-005,2024-05-04,buy,88000,Commodities Basket
+ACC-003,2024-05-05,buy,580000,Budapest District V Office
+ACC-002,2024-05-08,buy,155000,Tesla Inc.
+ACC-002,2024-05-09,buy,95000,Eli Lilly and Co.
+ACC-002,2024-05-09,buy,95000,JPMorgan Chase & Co.
+ACC-003,2024-05-15,buy,620000,Andrássy Apartment Complex
+ACC-001,2024-05-16,buy,75000,MOL Group
+ACC-001,2024-05-17,buy,145000,Novo Nordisk A/S
+ACC-001,2024-05-18,buy,98000,Roche Holding AG
+ACC-001,2024-05-21,buy,220000,ASML Holding NV
+ACC-005,2024-05-25,buy,175000,Venture Capital Tech Fund
+ACC-003,2024-06-02,buy,550000,Vienna Retail Space
+ACC-002,2024-06-04,buy,125000,Berkshire Hathaway
+ACC-002,2024-06-09,buy,65000,Procter & Gamble Co.
+ACC-002,2024-06-12,buy,72000,Mastercard Inc.
+ACC-001,2024-06-13,buy,68000,Adidas AG
+ACC-001,2024-06-23,buy,82000,TotalEnergies SE
+ACC-001,2024-06-23,buy,125000,SAP SE
+ACC-001,2024-07-05,dividend,3966,Roche Holding AG
+ACC-002,2024-07-07,dividend,1852,NVIDIA Corporation
+ACC-004,2024-07-22,fee,-436,HUF Money Market Fund
+ACC-005,2024-07-29,buy,19432,Private Equity Fund I
+ACC-001,2024-07-30,buy,46359,Novo Nordisk A/S
+ACC-002,2024-07-31,buy,19725,Alphabet Inc.
+ACC-005,2024-08-05,sell,-21847,Venture Capital Tech Fund
+ACC-003,2024-08-12,sell,-21959,Budapest District V Office
+ACC-001,2024-08-15,sell,-24277,Samsung Electronics
+ACC-002,2024-08-18,sell,-27009,Amazon.com Inc.
+ACC-001,2024-08-25,buy,7058,Nestlé SA
+ACC-002,2024-08-31,dividend,1272,Visa Inc.
+ACC-001,2024-09-10,dividend,3402,Richter Gedeon
+ACC-002,2024-09-14,dividend,2255,UnitedHealth Group
+ACC-001,2024-09-15,buy,42423,Nestlé SA
+ACC-005,2024-09-22,dividend,4374,Infrastructure Fund EU
+ACC-002,2024-09-28,dividend,1306,Procter & Gamble Co.
+ACC-002,2024-10-14,buy,17465,Tesla Inc.
+ACC-002,2024-10-18,dividend,943,Amazon.com Inc.
+ACC-002,2024-10-22,dividend,3279,NVIDIA Corporation
+ACC-001,2024-11-03,buy,35318,LVMH Moët Hennessy
+ACC-005,2024-11-10,interest,354,Hedge Fund Multi-Strategy
+ACC-002,2024-11-13,buy,47738,Alphabet Inc.
+ACC-001,2024-12-03,fee,-484,Toyota Motor Corp.
+ACC-002,2024-12-11,buy,36826,UnitedHealth Group
+ACC-002,2024-12-24,buy,31282,JPMorgan Chase & Co.
+ACC-002,2024-12-30,dividend,4486,UnitedHealth Group
+ACC-001,2025-01-04,sell,-19909,Samsung Electronics
+ACC-001,2025-01-07,buy,5141,L'Oréal SA
+ACC-001,2025-01-26,buy,25552,Siemens AG
+ACC-001,2025-02-10,buy,36246,ASML Holding NV
+ACC-005,2025-02-12,sell,-6916,Venture Capital Tech Fund
+ACC-003,2025-02-26,buy,38281,Vienna Retail Space
+ACC-004,2025-02-27,interest,1026,HUF Money Market Fund
+ACC-001,2025-03-03,fee,-341,Taiwan Semiconductor
+ACC-004,2025-03-14,buy,48081,EUR Government Bonds (Short)
+ACC-001,2025-03-15,dividend,825,ASML Holding NV
+ACC-004,2025-03-17,buy,9453,USD Cash Reserve
+ACC-003,2025-03-26,fee,-87,Munich Office Building
+ACC-002,2025-03-28,fee,-101,UnitedHealth Group
+ACC-002,2025-04-01,dividend,2636,Procter & Gamble Co.
+ACC-002,2025-04-02,dividend,3073,Johnson & Johnson
+ACC-005,2025-04-05,dividend,4245,Private Equity Fund I
+ACC-001,2025-04-16,sell,-9288,Infineon Technologies
+ACC-005,2025-04-29,buy,22380,Infrastructure Fund EU
+ACC-002,2025-04-30,buy,23676,NVIDIA Corporation
+ACC-002,2025-05-14,dividend,2978,Mastercard Inc.
+ACC-001,2025-05-15,fee,-463,Samsung Electronics
+ACC-004,2025-05-23,fee,-85,EUR Government Bonds (Short)
+ACC-005,2025-05-27,dividend,916,Infrastructure Fund EU
+ACC-005,2025-05-28,sell,-26737,Commodities Basket
+ACC-002,2025-05-31,dividend,3308,Alphabet Inc.
+ACC-001,2025-06-02,fee,-118,L'Oréal SA
+ACC-005,2025-06-03,dividend,2731,Venture Capital Tech Fund
+ACC-001,2025-06-10,dividend,2662,Roche Holding AG
+ACC-001,2025-06-17,buy,12014,Adidas AG
+ACC-001,2025-06-25,dividend,2766,MOL Group
+ACC-001,2025-06-26,dividend,1416,MOL Group
+ACC-001,2025-07-14,buy,13573,MOL Group
+ACC-001,2025-07-17,fee,-132,MOL Group
+ACC-003,2025-07-20,buy,7361,Berlin Residential Block
+ACC-005,2025-07-22,fee,-403,Hedge Fund Multi-Strategy
+ACC-001,2025-08-04,buy,25202,ASML Holding NV
+ACC-001,2025-08-06,dividend,1713,Deutsche Telekom
+ACC-002,2025-08-27,fee,-433,Eli Lilly and Co.
+ACC-005,2025-09-13,buy,21353,Infrastructure Fund EU
+ACC-002,2025-09-19,fee,-171,Tesla Inc.
+ACC-005,2025-09-20,buy,41692,Infrastructure Fund EU
+ACC-002,2025-09-27,fee,-465,Meta Platforms Inc.
+ACC-002,2025-10-13,fee,-460,NVIDIA Corporation
+ACC-001,2025-10-17,buy,26770,Nestlé SA
+ACC-003,2025-10-25,sell,-27979,Prague Mixed-Use
+ACC-005,2025-10-28,buy,48255,Commodities Basket
+ACC-001,2025-10-31,fee,-229,TotalEnergies SE
+ACC-001,2025-11-17,dividend,2134,Adidas AG
+ACC-002,2025-11-18,sell,-6268,Microsoft Corporation
+ACC-002,2025-11-22,fee,-185,Meta Platforms Inc.
+ACC-002,2025-12-01,sell,-22570,UnitedHealth Group
+ACC-003,2025-12-07,sell,-26020,Berlin Residential Block
+ACC-001,2025-12-09,fee,-141,Novo Nordisk A/S
+ACC-004,2025-12-15,sell,-7274,EUR Government Bonds (Short)
+ACC-003,2025-12-19,fee,-109,Berlin Residential Block
+ACC-005,2025-12-24,dividend,4689,Infrastructure Fund EU

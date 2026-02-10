@@ -1,0 +1,79 @@
+[
+  {
+    "holding_id": "RE-30",
+    "name": "Andr\u00e1ssy Apartment Complex",
+    "lat": 47.49330781733379,
+    "lon": 19.043263521739863,
+    "address": "Budapest, HU",
+    "property_type": "Residential",
+    "size_sqm": 210,
+    "year_built": 1972,
+    "floors": 12
+  },
+  {
+    "holding_id": "RE-31",
+    "name": "Munich Office Building",
+    "lat": 48.1325423006182,
+    "lon": 11.582796813942664,
+    "address": "Munich, DE",
+    "property_type": "Commercial",
+    "size_sqm": 1851,
+    "year_built": 2004,
+    "floors": 11
+  },
+  {
+    "holding_id": "RE-32",
+    "name": "Vienna Retail Space",
+    "lat": 48.21697719996579,
+    "lon": 16.383478003113577,
+    "address": "Vienna, AT",
+    "property_type": "Retail",
+    "size_sqm": 1473,
+    "year_built": 1982,
+    "floors": 1
+  },
+  {
+    "holding_id": "RE-33",
+    "name": "Prague Mixed-Use",
+    "lat": 50.070068858871245,
+    "lon": 14.42059895244505,
+    "address": "Prague, CZ",
+    "property_type": "Mixed-Use",
+    "size_sqm": 1652,
+    "year_built": 2009,
+    "floors": 1
+  },
+  {
+    "holding_id": "RE-34",
+    "name": "Budapest District V Office",
+    "lat": 47.49045662580234,
+    "lon": 19.054120611180252,
+    "address": "Budapest, HU",
+    "property_type": "Commercial",
+    "size_sqm": 1674,
+    "year_built": 1989,
+    "floors": 9
+  },
+  {
+    "holding_id": "RE-35",
+    "name": "Berlin Residential Block",
+    "lat": 52.51237138648835,
+    "lon": 13.401335716344768,
+    "address": "Berlin, DE",
+    "property_type": "Residential",
+    "size_sqm": 286,
+    "year_built": 2014,
+    "floors": 5
+  },
+  {
+    "holding_id": "RE-36",
+    "name": "Warehouse Logistics Park",
+    "lat": 47.689676499106675,
+    "lon": 17.638073603719608,
+    "address": "Gy\u0151r, HU",
+    "property_type": "Industrial",
+    "size_sqm": 3605,
+    "year_built": 2013,
+    "floors": 1
+  }
+]
