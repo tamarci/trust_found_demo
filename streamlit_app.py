@@ -9,14 +9,7 @@ import streamlit as st
 import pandas as pd
 import traceback
 
-# Lazy import plotly to avoid Streamlit Cloud issues
-def get_plotly():
-    try:
-        import plotly.graph_objects as go
-        return go
-    except ImportError:
-        st.error("Plotly not available. Install with: pip install plotly")
-        return None
+# No external chart libraries needed - using Streamlit's built-in charts
 
 # Page configuration - MUST be first Streamlit command
 st.set_page_config(
@@ -51,7 +44,7 @@ try:
         get_top_holdings, calculate_cash_percentage, generate_insights
     )
     from app.services.translations import t
-    # Charts imported lazily to avoid plotly import issues
+    # Don't import charts - they have plotly dependencies
     IMPORTS_OK = True
 except Exception as e:
     st.error(f"Import Error: {str(e)}")
@@ -259,24 +252,24 @@ with tab1:
             
             st.divider()
             
-            # Charts
+            # Charts - Simple visualizations without plotly
             col1, col2 = st.columns([2, 3])
             
             with col1:
                 st.markdown("#### Asset Allocation")
                 try:
                     allocation = calculate_asset_allocation(filtered_holdings)
-                    # Simple bar chart instead of donut
-                    st.bar_chart(allocation.set_index('asset_type')['value'])
+                    # Simple bar chart with Streamlit
+                    st.bar_chart(allocation.set_index('asset_type')['percentage'])
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
             with col2:
                 st.markdown("#### Portfolio Value Over Time")
                 try:
-                    # Simple line chart
-                    if 'date' in filtered_nav.columns and 'value' in filtered_nav.columns:
-                        st.line_chart(filtered_nav.set_index('date')['value'])
+                    # Simple line chart with Streamlit
+                    nav_chart_data = filtered_nav.set_index('date')['value']
+                    st.line_chart(nav_chart_data)
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
@@ -305,7 +298,7 @@ with tab2:
                 st.markdown("#### Sector Allocation")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    st.bar_chart(sector_allocation.set_index('sector')['value'])
+                    st.bar_chart(sector_allocation.set_index('sector')['percentage'])
                 except Exception as e:
                     st.warning(f"Sector chart unavailable: {str(e)}")
             
@@ -313,7 +306,7 @@ with tab2:
                 st.markdown("#### Region Allocation")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    st.bar_chart(region_allocation.set_index('region')['value'])
+                    st.bar_chart(region_allocation.set_index('region')['percentage'])
                 except Exception as e:
                     st.warning(f"Region chart unavailable: {str(e)}")
             
@@ -352,23 +345,22 @@ with tab3:
             
             st.divider()
             
-            # Ownership table
-            st.markdown("#### Company Ownership Details")
+            # Ownership Structure - Simple visualization
+            st.markdown("#### Company Ownership Structure")
             try:
-                company_data = []
-                for company in companies:
-                    company_data.append({
-                        'Company': company['name'],
-                        'Ownership %': f"{company.get('ownership_percentage', 0):.1f}%",
-                        'Status': '🟢 Controlled' if company.get('ownership_percentage', 0) >= 50 else '🔵 Minority'
-                    })
+                # Create a simple bar chart of ownership percentages
+                ownership_df = pd.DataFrame(companies)
+                ownership_df = ownership_df.sort_values('ownership_percentage', ascending=True)
                 
-                if company_data:
-                    import pandas as pd
-                    df = pd.DataFrame(company_data)
-                    st.dataframe(df, use_container_width=True, hide_index=True)
+                # Display as horizontal bars
+                for _, company in ownership_df.iterrows():
+                    pct = company.get('ownership_percentage', 0)
+                    color = "🟢" if pct >= 50 else "🔵" if pct >= 25 else "⚪"
+                    st.write(f"{color} **{company['name']}**: {pct:.1f}%")
+                    st.progress(pct / 100)
+                    
             except Exception as e:
-                st.warning(f"Ownership data unavailable: {str(e)}")
+                st.warning(f"Ownership visualization unavailable: {str(e)}")
                 
     except Exception as e:
         st.error(f"Ownership tab error: {str(e)}")
@@ -422,7 +414,7 @@ with tab5:
                 st.markdown("##### Sector Distribution")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    st.bar_chart(sector_allocation.set_index('sector')['value'])
+                    st.bar_chart(sector_allocation.set_index('sector')['percentage'])
                 except:
                     st.info("Sector data not available")
             
@@ -430,7 +422,7 @@ with tab5:
                 st.markdown("##### Region Distribution")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    st.bar_chart(region_allocation.set_index('region')['value'])
+                    st.bar_chart(region_allocation.set_index('region')['percentage'])
                 except:
                     st.info("Region data not available")
                     
