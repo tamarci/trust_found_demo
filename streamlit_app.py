@@ -8,31 +8,9 @@ from datetime import datetime, timedelta
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import traceback
 
-# Import services
-from app.services.data_loader import (
-    load_client, load_accounts, load_holdings, load_transactions, load_nav,
-    load_ownership, load_real_estate_locations, get_asset_type_options, convert_currency
-)
-from app.services.filters import filter_holdings, filter_transactions, filter_nav, parse_date_range
-from app.services.metrics import (
-    calculate_total_value, calculate_unrealized_pnl, calculate_returns_from_nav,
-    calculate_ytd_return, calculate_volatility, calculate_max_drawdown,
-    calculate_asset_allocation, calculate_region_allocation, calculate_sector_allocation,
-    get_top_holdings, calculate_concentration, calculate_liquidity_score,
-    calculate_cash_percentage, generate_insights,
-    calculate_cashflow_summary, calculate_income_summary
-)
-from app.services.translations import t
-
-# Import components
-from app.components.charts import (
-    create_allocation_donut, create_nav_line_chart, create_region_bar_chart,
-    create_sector_bar_chart, create_cashflow_chart, create_property_type_donut,
-    create_geography_bar, create_account_breakdown_donut
-)
-
-# Page configuration
+# Page configuration - MUST be first Streamlit command
 st.set_page_config(
     page_title="SQN Trust | Portfolio Dashboard",
     page_icon="🏦",
@@ -40,68 +18,51 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Error handling wrapper
+def safe_execute(func, fallback=None, error_msg="An error occurred"):
+    """Safely execute a function with error handling"""
+    try:
+        return func()
+    except Exception as e:
+        st.error(f"{error_msg}: {str(e)}")
+        if fallback is not None:
+            return fallback
+        return None
+
+# Import services with error handling
+try:
+    from app.services.data_loader import (
+        load_client, load_accounts, load_holdings, load_transactions, load_nav,
+        load_ownership, load_real_estate_locations, get_asset_type_options
+    )
+    from app.services.filters import filter_holdings, filter_transactions, filter_nav, parse_date_range
+    from app.services.metrics import (
+        calculate_total_value, calculate_unrealized_pnl, calculate_returns_from_nav,
+        calculate_ytd_return, calculate_volatility,
+        calculate_asset_allocation, calculate_region_allocation, calculate_sector_allocation,
+        get_top_holdings, calculate_cash_percentage, generate_insights
+    )
+    from app.services.translations import t
+    from app.components.charts import (
+        create_allocation_donut, create_nav_line_chart, create_region_bar_chart,
+        create_sector_bar_chart, create_property_type_donut,
+        create_geography_bar, create_account_breakdown_donut
+    )
+    IMPORTS_OK = True
+except Exception as e:
+    st.error(f"Import Error: {str(e)}")
+    IMPORTS_OK = False
+
+if not IMPORTS_OK:
+    st.stop()
+
 # Custom CSS
 st.markdown("""
 <style>
-    /* Main container */
-    .main {
-        background-color: #f8fafc;
-    }
-    
-    /* Header styling */
-    .stApp header {
-        background-color: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    
-    /* Metric cards */
-    [data-testid="stMetricValue"] {
-        font-size: 1.5rem;
-        color: #1a365d;
-    }
-    
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #ffffff;
-    }
-    
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        padding: 12px 24px;
-        color: #718096;
-        font-weight: 500;
-        border-radius: 8px 8px 0 0;
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background-color: #1a365d;
-        color: white;
-    }
-    
-    /* Cards */
-    .element-container {
-        border-radius: 8px;
-    }
-    
-    /* Remove padding from top */
-    .block-container {
-        padding-top: 2rem;
-    }
-    
-    /* Custom title styling */
-    h1 {
-        color: #1a365d;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-    }
-    
-    h2, h3 {
-        color: #2d5a87;
-    }
+    .main { background-color: #f8fafc; }
+    [data-testid="stMetricValue"] { font-size: 1.5rem; color: #1a365d; }
+    h1 { color: #1a365d; font-weight: 700; }
+    h2, h3 { color: #2d5a87; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -113,26 +74,27 @@ if 'currency' not in st.session_state:
 if 'asset_type' not in st.session_state:
     st.session_state.asset_type = 'all'
 
-# Load client data
-client = load_client()
+# Load client data with error handling
+try:
+    client = load_client()
+except Exception as e:
+    st.error(f"Failed to load client data: {str(e)}")
+    client = {"name": "Client", "risk_profile": "Moderate", "base_currency": "EUR"}
 
 # Header
 col1, col2, col3 = st.columns([2, 1, 1])
 with col1:
     st.markdown(f"# 🏦 SQN Trust")
-    st.markdown(f"**{client['name']}** | {t('subtitle', st.session_state.language)}")
-
-with col2:
-    st.write("")  # Spacer
+    st.markdown(f"**{client.get('name', 'Client')}** | Portfolio Dashboard")
 
 with col3:
     lang_col1, lang_col2 = st.columns(2)
     with lang_col1:
-        if st.button("🇬🇧 EN", use_container_width=True, type="primary" if st.session_state.language == 'en' else "secondary"):
+        if st.button("🇬🇧 EN", key="lang_en", type="primary" if st.session_state.language == 'en' else "secondary"):
             st.session_state.language = 'en'
             st.rerun()
     with lang_col2:
-        if st.button("🇭🇺 HU", use_container_width=True, type="primary" if st.session_state.language == 'hu' else "secondary"):
+        if st.button("🇭🇺 HU", key="lang_hu", type="primary" if st.session_state.language == 'hu' else "secondary"):
             st.session_state.language = 'hu'
             st.rerun()
 
@@ -140,19 +102,24 @@ st.divider()
 
 # Sidebar filters
 with st.sidebar:
-    st.image("https://via.placeholder.com/200x80/1a365d/ffffff?text=SQN+Trust", use_column_width=True)
+    st.markdown("## 🏦 SQN Trust")
+    st.caption("Portfolio Dashboard")
     
     st.markdown("### Filters")
     
     # Asset type filter
-    asset_type_options = get_asset_type_options()
-    asset_type_dict = {opt['label']: opt['value'] for opt in asset_type_options}
-    selected_asset_label = st.selectbox(
-        "Asset Type",
-        options=list(asset_type_dict.keys()),
-        index=0
-    )
-    st.session_state.asset_type = asset_type_dict[selected_asset_label]
+    try:
+        asset_type_options = get_asset_type_options()
+        asset_type_dict = {opt['label']: opt['value'] for opt in asset_type_options}
+        selected_asset_label = st.selectbox(
+            "Asset Type",
+            options=list(asset_type_dict.keys()),
+            index=0
+        )
+        st.session_state.asset_type = asset_type_dict[selected_asset_label]
+    except Exception as e:
+        st.error(f"Filter error: {str(e)}")
+        st.session_state.asset_type = 'all'
     
     # Currency selector
     st.session_state.currency = st.radio(
@@ -170,7 +137,11 @@ with st.sidebar:
         index=3
     )
     
-    start_date, end_date = parse_date_range(period)
+    try:
+        start_date, end_date = parse_date_range(period)
+    except:
+        start_date = datetime.now() - timedelta(days=365)
+        end_date = datetime.now()
     
     col1, col2 = st.columns(2)
     with col1:
@@ -184,38 +155,39 @@ with st.sidebar:
     
     st.markdown("### About")
     st.info(f"""
-    **Client:** {client['name']}  
-    **Risk Profile:** {client['risk_profile']}  
-    **Base Currency:** {client['base_currency']}
+    **Client:** {client.get('name', 'N/A')}  
+    **Risk Profile:** {client.get('risk_profile', 'N/A')}  
+    **Base Currency:** {client.get('base_currency', 'EUR')}
     """)
 
-# Load and filter data
+# Load and filter data with error handling
 lang = st.session_state.language
 currency = st.session_state.currency
 asset_type = st.session_state.asset_type
 
-holdings = load_holdings()
-transactions = load_transactions()
-nav = load_nav()
-accounts = load_accounts()
+try:
+    holdings = load_holdings()
+    transactions = load_transactions()
+    nav = load_nav()
+    accounts = load_accounts()
+except Exception as e:
+    st.error(f"Data loading error: {str(e)}")
+    st.stop()
 
 # Apply filters
-filtered_holdings = filter_holdings(holdings, None, asset_type, date_range)
-filtered_transactions = filter_transactions(transactions, None, None, date_range)
-filtered_nav = filter_nav(nav, None, date_range)
+try:
+    filtered_holdings = filter_holdings(holdings, None, asset_type, date_range)
+    filtered_transactions = filter_transactions(transactions, None, None, date_range)
+    filtered_nav = filter_nav(nav, None, date_range)
+except Exception as e:
+    st.warning(f"Filter error: {str(e)}")
+    filtered_holdings = holdings
+    filtered_transactions = transactions
+    filtered_nav = nav
 
 # Currency conversion
-conversion_rates = {
-    "EUR": 1.0,
-    "USD": 1.09,
-    "HUF": 395.0
-}
-
-currency_symbols = {
-    "EUR": "€",
-    "USD": "$",
-    "HUF": "Ft "
-}
+conversion_rates = {"EUR": 1.0, "USD": 1.09, "HUF": 395.0}
+currency_symbols = {"EUR": "€", "USD": "$", "HUF": "Ft"}
 
 if currency != "EUR":
     conversion_rate = conversion_rates.get(currency, 1.0)
@@ -229,419 +201,315 @@ currency_symbol = currency_symbols.get(currency, "€")
 
 # Main tabs
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-    t("tab_summary", lang),
-    t("tab_assets", lang),
-    t("tab_ownership", lang),
-    t("tab_map", lang),
-    t("tab_diversity", lang),
-    t("tab_insights", lang),
-    t("tab_reports", lang),
-    t("tab_about", lang)
+    "📊 Summary",
+    "💼 Assets",
+    "🏢 Ownership",
+    "🗺️ Map",
+    "🌍 Diversity",
+    "💡 Insights",
+    "📈 Reports",
+    "ℹ️ About"
 ])
 
 # Tab 1: Summary
 with tab1:
     if filtered_holdings.empty:
-        st.warning(t("no_assets", lang))
+        st.warning("No assets found with current filters")
     else:
-        # Calculate metrics
-        total_value = calculate_total_value(filtered_holdings)
-        pnl_abs, pnl_pct = calculate_unrealized_pnl(filtered_holdings)
-        returns_1y = calculate_returns_from_nav(filtered_nav, 365)
-        ytd_return = calculate_ytd_return(filtered_nav)
-        volatility = calculate_volatility(filtered_nav)
-        cash_pct = calculate_cash_percentage(filtered_holdings)
-        
-        # KPI Cards
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric(
-                label=t("total_portfolio_value", lang),
-                value=f"{currency_symbol}{total_value:,.0f}",
-                help=t("tooltip_portfolio_value", lang)
-            )
-        
-        with col2:
-            st.metric(
-                label=t("1y_return", lang),
-                value=f"{returns_1y['return_pct']:+.1f}%",
-                delta=f"{returns_1y['return_pct']:.1f}%",
-                help=t("tooltip_1y_return", lang)
-            )
-        
-        with col3:
-            st.metric(
-                label=t("ytd_return", lang),
-                value=f"{ytd_return:+.1f}%",
-                delta=f"{ytd_return:.1f}%",
-                help=t("tooltip_ytd_return", lang)
-            )
-        
-        with col4:
-            st.metric(
-                label=t("volatility", lang),
-                value=f"{volatility:.1f}%",
-                help=t("tooltip_volatility", lang)
-            )
-        
-        st.divider()
-        
-        # Charts
-        col1, col2 = st.columns([2, 3])
-        
-        with col1:
-            st.markdown(f"#### {t('asset_allocation', lang)}")
-            allocation = calculate_asset_allocation(filtered_holdings)
-            fig = create_allocation_donut(allocation)
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.markdown(f"#### {t('portfolio_value_over_time', lang)}")
-            fig = create_nav_line_chart(filtered_nav)
-            st.plotly_chart(fig, use_container_width=True)
-        
-        st.divider()
-        
-        # Top holdings table
-        st.markdown(f"#### {t('top_holdings', lang) if 'top_holdings' in dir() else 'Top Holdings'}")
-        top_holdings_df = get_top_holdings(filtered_holdings, 10)
-        st.dataframe(top_holdings_df, use_container_width=True, hide_index=True)
+        try:
+            # Calculate metrics
+            total_value = calculate_total_value(filtered_holdings)
+            pnl_abs, pnl_pct = calculate_unrealized_pnl(filtered_holdings)
+            returns_1y = calculate_returns_from_nav(filtered_nav, 365)
+            ytd_return = calculate_ytd_return(filtered_nav)
+            volatility = calculate_volatility(filtered_nav)
+            
+            # KPI Cards
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric(
+                    label="Total Portfolio Value",
+                    value=f"{currency_symbol}{total_value:,.0f}"
+                )
+            
+            with col2:
+                st.metric(
+                    label="1Y Return",
+                    value=f"{returns_1y['return_pct']:+.1f}%",
+                    delta=f"{returns_1y['return_pct']:.1f}%"
+                )
+            
+            with col3:
+                st.metric(
+                    label="YTD Return",
+                    value=f"{ytd_return:+.1f}%",
+                    delta=f"{ytd_return:.1f}%"
+                )
+            
+            with col4:
+                st.metric(
+                    label="Volatility",
+                    value=f"{volatility:.1f}%"
+                )
+            
+            st.divider()
+            
+            # Charts
+            col1, col2 = st.columns([2, 3])
+            
+            with col1:
+                st.markdown("#### Asset Allocation")
+                try:
+                    allocation = calculate_asset_allocation(filtered_holdings)
+                    fig = create_allocation_donut(allocation)
+                    st.plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.error(f"Chart error: {str(e)}")
+            
+            with col2:
+                st.markdown("#### Portfolio Value Over Time")
+                try:
+                    fig = create_nav_line_chart(filtered_nav)
+                    st.plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.error(f"Chart error: {str(e)}")
+            
+            st.divider()
+            
+            # Top holdings
+            st.markdown("#### Top Holdings")
+            try:
+                top_holdings_df = get_top_holdings(filtered_holdings, 10)
+                st.dataframe(top_holdings_df, use_container_width=True, hide_index=True)
+            except Exception as e:
+                st.error(f"Table error: {str(e)}")
+                
+        except Exception as e:
+            st.error(f"Summary tab error: {str(e)}")
 
 # Tab 2: Assets
 with tab2:
     if filtered_holdings.empty:
-        st.warning(t("no_assets", lang))
+        st.warning("No assets found")
     else:
-        # Breakdown charts based on asset type
-        col1, col2 = st.columns(2)
-        
-        if asset_type == "Shares" or (asset_type == "all" and 
-            filtered_holdings[filtered_holdings["asset_type"] == "Shares"]["valuation_current"].sum() > 
-            filtered_holdings["valuation_current"].sum() * 0.5):
+        try:
+            col1, col2 = st.columns(2)
+            
             with col1:
                 st.markdown("#### Sector Allocation")
-                sector_allocation = calculate_sector_allocation(filtered_holdings)
-                fig = create_sector_bar_chart(sector_allocation)
-                st.plotly_chart(fig, use_container_width=True)
+                try:
+                    sector_allocation = calculate_sector_allocation(filtered_holdings)
+                    fig = create_sector_bar_chart(sector_allocation)
+                    st.plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.warning(f"Sector chart unavailable: {str(e)}")
             
             with col2:
                 st.markdown("#### Region Allocation")
-                region_allocation = calculate_region_allocation(filtered_holdings)
-                fig = create_region_bar_chart(region_allocation)
-                st.plotly_chart(fig, use_container_width=True)
-        
-        elif asset_type == "RealEstate":
-            with col1:
-                st.markdown("#### Property Type")
-                fig = create_property_type_donut(filtered_holdings)
-                st.plotly_chart(fig, use_container_width=True)
+                try:
+                    region_allocation = calculate_region_allocation(filtered_holdings)
+                    fig = create_region_bar_chart(region_allocation)
+                    st.plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.warning(f"Region chart unavailable: {str(e)}")
             
-            with col2:
-                st.markdown("#### Geography")
-                fig = create_geography_bar(filtered_holdings)
-                st.plotly_chart(fig, use_container_width=True)
-        
-        else:
-            with col1:
-                st.markdown("#### Sector Allocation")
-                sector_allocation = calculate_sector_allocation(filtered_holdings)
-                fig = create_sector_bar_chart(sector_allocation)
-                st.plotly_chart(fig, use_container_width=True)
+            st.divider()
             
-            with col2:
-                st.markdown("#### Region Allocation")
-                region_allocation = calculate_region_allocation(filtered_holdings)
-                fig = create_region_bar_chart(region_allocation)
-                st.plotly_chart(fig, use_container_width=True)
-        
-        st.divider()
-        
-        # Full holdings table
-        st.markdown(f"#### {t('all_assets', lang)}")
-        
-        # Select only available columns
-        display_cols = ['asset_name', 'asset_type', 'valuation_current', 'last_valuation_date']
-        available_cols = [col for col in display_cols if col in filtered_holdings.columns]
-        
-        st.dataframe(
-            filtered_holdings[available_cols],
-            use_container_width=True,
-            hide_index=True
-        )
+            # Holdings table
+            st.markdown("#### All Assets")
+            display_cols = ['asset_name', 'asset_type', 'valuation_current', 'last_valuation_date']
+            available_cols = [col for col in display_cols if col in filtered_holdings.columns]
+            st.dataframe(filtered_holdings[available_cols], use_container_width=True, hide_index=True)
+            
+        except Exception as e:
+            st.error(f"Assets tab error: {str(e)}")
 
 # Tab 3: Ownership
 with tab3:
-    ownership_data = load_ownership()
-    
-    if not ownership_data or not ownership_data.get("companies"):
-        st.warning(t("no_data", lang))
-    else:
+    try:
+        ownership_data = load_ownership()
         companies = ownership_data.get("companies", [])
         
-        # Summary metrics
-        col1, col2, col3 = st.columns(3)
-        
-        total_companies = len(companies)
-        controlled_count = len([c for c in companies if c.get("ownership_percentage", 0) >= 50])
-        minority_count = len([c for c in companies if c.get("ownership_percentage", 0) < 25])
-        avg_ownership = sum(c.get("ownership_percentage", 0) for c in companies) / total_companies if total_companies > 0 else 0
-        
-        with col1:
-            st.metric("Average Ownership" if lang == "en" else "Átlagos Tulajdon", f"{avg_ownership:.1f}%")
-        
-        with col2:
-            st.metric("Controlled Companies" if lang == "en" else "Irányított Cégek", controlled_count, help=">50% ownership")
-        
-        with col3:
-            st.metric("Minority Stakes" if lang == "en" else "Kisebbségi Részesedések", minority_count, help="<25% ownership")
-        
-        st.divider()
-        
-        # Sankey diagram
-        st.markdown(f"#### {t('company_ownership', lang)}")
-        
-        client_name = client.get("name", "Client")
-        
-        # Build Sankey data
-        node_labels = [client_name]
-        node_colors = ["#1a365d"]
-        
-        sources = []
-        targets = []
-        values = []
-        link_colors = []
-        
-        for i, company in enumerate(companies):
-            node_labels.append(company["name"])
-            ownership_pct = company.get("ownership_percentage", 0)
+        if not companies:
+            st.warning("No ownership data available")
+        else:
+            col1, col2, col3 = st.columns(3)
             
-            if ownership_pct >= 50:
-                node_colors.append("#38a169")
-                link_colors.append("rgba(56, 161, 105, 0.5)")
-            elif ownership_pct >= 25:
-                node_colors.append("#d69e2e")
-                link_colors.append("rgba(214, 158, 46, 0.5)")
-            else:
-                node_colors.append("#3182ce")
-                link_colors.append("rgba(49, 130, 206, 0.5)")
+            total_companies = len(companies)
+            controlled_count = len([c for c in companies if c.get("ownership_percentage", 0) >= 50])
+            avg_ownership = sum(c.get("ownership_percentage", 0) for c in companies) / total_companies if total_companies > 0 else 0
             
-            sources.append(0)
-            targets.append(i + 1)
-            values.append(ownership_pct)
-        
-        fig = go.Figure(data=[go.Sankey(
-            node=dict(
-                pad=20,
-                thickness=30,
-                line=dict(color="white", width=0.5),
-                label=node_labels,
-                color=node_colors
-            ),
-            link=dict(
-                source=sources,
-                target=targets,
-                value=values,
-                color=link_colors
-            )
-        )])
-        
-        fig.update_layout(
-            height=500,
-            font=dict(size=14)
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-        
-        # Company list
-        st.markdown("#### Company Details")
-        company_df = pd.DataFrame(companies)
-        if not company_df.empty:
-            st.dataframe(company_df, use_container_width=True, hide_index=True)
+            with col1:
+                st.metric("Average Ownership", f"{avg_ownership:.1f}%")
+            with col2:
+                st.metric("Controlled Companies", controlled_count)
+            with col3:
+                st.metric("Total Companies", total_companies)
+            
+            st.divider()
+            
+            # Sankey diagram
+            st.markdown("#### Company Ownership Structure")
+            try:
+                client_name = client.get("name", "Client")
+                node_labels = [client_name] + [c["name"] for c in companies]
+                node_colors = ["#1a365d"] + ["#38a169" if c.get("ownership_percentage", 0) >= 50 else "#3182ce" for c in companies]
+                
+                sources = [0] * len(companies)
+                targets = list(range(1, len(companies) + 1))
+                values = [c.get("ownership_percentage", 0) for c in companies]
+                
+                fig = go.Figure(data=[go.Sankey(
+                    node=dict(pad=20, thickness=30, label=node_labels, color=node_colors),
+                    link=dict(source=sources, target=targets, value=values)
+                )])
+                fig.update_layout(height=500)
+                st.plotly_chart(fig, use_container_width=True)
+            except Exception as e:
+                st.warning(f"Ownership chart unavailable: {str(e)}")
+                
+    except Exception as e:
+        st.error(f"Ownership tab error: {str(e)}")
 
 # Tab 4: Map
 with tab4:
-    real_estate = filtered_holdings[filtered_holdings["asset_type"] == "RealEstate"].copy()
-    
-    if real_estate.empty:
-        st.warning("No real estate data available" if lang == "en" else "Nincs ingatlan adat")
-    else:
-        locations = load_real_estate_locations()
+    try:
+        real_estate = filtered_holdings[filtered_holdings["asset_type"] == "RealEstate"].copy()
         
-        # Summary metrics
-        col1, col2, col3 = st.columns(3)
-        
-        total_properties = len(real_estate)
-        total_value = real_estate["valuation_current"].sum()
-        avg_value = real_estate["valuation_current"].mean()
-        
-        with col1:
-            st.metric(t("total_real_estate_value", lang), f"{currency_symbol}{total_value:,.0f}")
-        
-        with col2:
-            st.metric(t("total_properties", lang), total_properties)
-        
-        with col3:
-            st.metric("Avg. Value" if lang == "en" else "Átl. Érték", f"{currency_symbol}{avg_value:,.0f}")
-        
-        st.divider()
-        
-        # Prepare location data
-        if locations:
-            location_df = pd.DataFrame(locations)
-            if "name" in location_df.columns:
-                merged = real_estate.merge(location_df, left_on="asset_name", right_on="name", how="left", suffixes=("", "_loc"))
-            else:
-                merged = real_estate.copy()
-                merged["lat"] = 47.4979
-                merged["lon"] = 19.0402
+        if real_estate.empty:
+            st.warning("No real estate data available")
         else:
-            merged = real_estate.copy()
-            merged["lat"] = 47.4979
-            merged["lon"] = 19.0402
-        
-        merged["lat"] = merged["lat"].fillna(47.4979)
-        merged["lon"] = merged["lon"].fillna(19.0402)
-        
-        # Create map
-        st.markdown(f"#### {t('real_estate_map', lang)}")
-        st.map(merged[["lat", "lon"]], zoom=4)
-        
-        # Property cards
-        st.markdown("#### Properties" if lang == "en" else "#### Ingatlanok")
-        
-        for idx, row in merged.head(6).iterrows():
-            with st.expander(f"**{row['asset_name']}** - {currency_symbol}{row['valuation_current']:,.0f}"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"**Type:** {row.get('property_type', 'N/A')}")
-                    st.write(f"**Location:** {row.get('city', row.get('address', 'N/A'))}")
-                with col2:
-                    if 'size_sqm' in row and pd.notna(row.get('size_sqm')):
-                        st.write(f"**Size:** {row['size_sqm']:,.0f} m²")
+            col1, col2, col3 = st.columns(3)
+            
+            total_properties = len(real_estate)
+            total_value = real_estate["valuation_current"].sum()
+            avg_value = real_estate["valuation_current"].mean()
+            
+            with col1:
+                st.metric("Total Real Estate Value", f"{currency_symbol}{total_value:,.0f}")
+            with col2:
+                st.metric("Total Properties", total_properties)
+            with col3:
+                st.metric("Avg. Value", f"{currency_symbol}{avg_value:,.0f}")
+            
+            st.divider()
+            
+            # Simple property list (avoid complex maps)
+            st.markdown("#### Properties")
+            for idx, row in real_estate.head(10).iterrows():
+                with st.expander(f"**{row['asset_name']}** - {currency_symbol}{row['valuation_current']:,.0f}"):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write(f"**Type:** {row.get('property_type', 'N/A')}")
+                        st.write(f"**Location:** {row.get('city', 'N/A')}")
+                    with col2:
+                        st.write(f"**Value:** {currency_symbol}{row['valuation_current']:,.0f}")
+                        
+    except Exception as e:
+        st.error(f"Map tab error: {str(e)}")
 
 # Tab 5: Diversity
 with tab5:
     if filtered_holdings.empty:
-        st.warning(t("no_assets", lang))
+        st.warning("No data available")
     else:
-        st.markdown(f"#### {t('portfolio_diversity', lang)}")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("##### Sector Distribution")
-            sector_allocation = calculate_sector_allocation(filtered_holdings)
-            fig = create_sector_bar_chart(sector_allocation)
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.markdown("##### Region Distribution")
-            region_allocation = calculate_region_allocation(filtered_holdings)
-            fig = create_region_bar_chart(region_allocation)
-            st.plotly_chart(fig, use_container_width=True)
-        
-        # Geographic map
-        if "country" in filtered_holdings.columns:
-            st.divider()
-            st.markdown("##### Geographic Distribution")
+        try:
+            col1, col2 = st.columns(2)
             
-            country_grouped = filtered_holdings[filtered_holdings["country"].notna()].groupby("country")["valuation_current"].sum().reset_index()
-            country_grouped.columns = ["country", "value"]
-            country_grouped = country_grouped.sort_values("value", ascending=False)
+            with col1:
+                st.markdown("##### Sector Distribution")
+                try:
+                    sector_allocation = calculate_sector_allocation(filtered_holdings)
+                    fig = create_sector_bar_chart(sector_allocation)
+                    st.plotly_chart(fig, use_container_width=True)
+                except:
+                    st.info("Sector data not available")
             
-            st.bar_chart(country_grouped.set_index("country"))
+            with col2:
+                st.markdown("##### Region Distribution")
+                try:
+                    region_allocation = calculate_region_allocation(filtered_holdings)
+                    fig = create_region_bar_chart(region_allocation)
+                    st.plotly_chart(fig, use_container_width=True)
+                except:
+                    st.info("Region data not available")
+                    
+        except Exception as e:
+            st.error(f"Diversity tab error: {str(e)}")
 
 # Tab 6: Insights
 with tab6:
-    if filtered_holdings.empty:
-        st.warning(t("no_insights", lang) if "no_insights" in dir() else "No insights available")
-    else:
-        insights = generate_insights(filtered_holdings, filtered_nav, client, currency_symbol=currency_symbol)
-        
-        st.markdown(f"#### {t('portfolio_insights', lang)}")
-        st.caption(t('insights_subtitle', lang))
-        
-        # Display insights in cards
-        for i in range(0, len(insights), 3):
-            cols = st.columns(3)
-            for j, col in enumerate(cols):
-                if i + j < len(insights):
-                    insight = insights[i + j]
-                    with col:
-                        with st.container():
+    try:
+        if filtered_holdings.empty:
+            st.warning("No data for insights")
+        else:
+            st.markdown("#### Portfolio Insights")
+            insights = generate_insights(filtered_holdings, filtered_nav, client, currency_symbol=currency_symbol)
+            
+            for i in range(0, len(insights), 3):
+                cols = st.columns(3)
+                for j, col in enumerate(cols):
+                    if i + j < len(insights):
+                        insight = insights[i + j]
+                        with col:
                             st.markdown(f"**{insight['title']}**")
                             st.caption(insight['text'])
-                            st.divider()
+                            
+    except Exception as e:
+        st.error(f"Insights error: {str(e)}")
 
 # Tab 7: Reports
 with tab7:
-    st.markdown(f"#### {t('export_data', lang)}")
+    st.markdown("#### Export Data")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("##### CSV Export")
-        st.write(t("export_data", lang) if lang == "hu" else "Download your portfolio data in CSV format for external analysis.")
+        st.write("Download portfolio data")
         
-        csv = filtered_holdings.to_csv(index=False)
-        st.download_button(
-            label="📥 " + t("export_assets_csv", lang),
-            data=csv,
-            file_name="sqn_trust_holdings.csv",
-            mime="text/csv"
-        )
+        try:
+            csv = filtered_holdings.to_csv(index=False)
+            st.download_button(
+                label="📥 Download CSV",
+                data=csv,
+                file_name="portfolio_holdings.csv",
+                mime="text/csv"
+            )
+        except Exception as e:
+            st.error(f"Export error: {str(e)}")
     
     with col2:
         st.markdown("##### PDF Reports")
-        st.write("Generate formatted PDF reports for your records." if lang == "en" else "Készíts formázott PDF jelentéseket.")
-        st.button("📄 " + t("export_pdf", lang), disabled=True, help=t("coming_soon", lang))
+        st.write("Coming soon...")
+        st.button("📄 Generate PDF", disabled=True)
 
 # Tab 8: About
 with tab8:
-    st.markdown(f"#### Client Profile" if lang == "en" else "#### Ügyfél Profil")
+    st.markdown("#### Client Profile")
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("##### Profile Details")
-        st.write(f"**Client ID:** {client['id']}")
-        st.write(f"**Name:** {client['name']}")
-        st.write(f"**Risk Profile:** {client['risk_profile']}")
-        st.write(f"**Base Currency:** {client['base_currency']}")
-        st.write(f"**Relationship Start:** {client['relationship_start_date']}")
+        st.markdown("##### Details")
+        st.write(f"**Client:** {client.get('name', 'N/A')}")
+        st.write(f"**Risk Profile:** {client.get('risk_profile', 'N/A')}")
+        st.write(f"**Base Currency:** {client.get('base_currency', 'EUR')}")
     
     with col2:
-        st.markdown(f"##### {t('target_allocation', lang)}")
-        target = client.get("target_allocation", {})
-        for asset_type, pct in target.items():
-            st.progress(pct, text=f"{asset_type}: {pct * 100:.0f}%")
-    
-    with col3:
-        st.markdown("##### Important Notice" if lang == "en" else "##### Fontos Közlemény")
-        st.warning(f"""
-        ⚠️ **{t('disclaimer', lang)}**
+        st.markdown("##### Disclaimer")
+        st.warning("""
+        ⚠️ **Demo Data**
         
-        This dashboard displays demo data generated for demonstration purposes only.
-        
-        The information presented here does not constitute investment advice and should not be used as the basis for any investment decision.
-        
-        Past performance is not indicative of future results. All investments carry risk, including the potential loss of principal.
-        """ if lang == "en" else """
-        ⚠️ **{t('disclaimer', lang)}**
-        
-        Ez a műszerfal demo adatokat jelenít meg, amelyek csak bemutatási célokat szolgálnak.
-        
-        Az itt megjelenített információk nem minősülnek befektetési tanácsnak, és nem szolgálhatnak befektetési döntések alapjául.
-        
-        A múltbeli teljesítmény nem garantálja a jövőbeli eredményeket. Minden befektetés kockázattal jár, beleértve a tőkevesztés lehetőségét.
+        This dashboard displays demo data for demonstration purposes only.
+        Not financial advice.
         """)
 
 # Footer
 st.divider()
 st.markdown("""
-<div style="text-align: center; color: #718096; font-size: 0.875rem; padding: 2rem 0;">
+<div style="text-align: center; color: #718096; font-size: 0.875rem;">
     <p>SQN Trust Portfolio Dashboard | Demo Version</p>
-    <p>© 2026 SQN Trust. All rights reserved.</p>
 </div>
 """, unsafe_allow_html=True)
