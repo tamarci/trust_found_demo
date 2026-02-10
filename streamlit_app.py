@@ -31,10 +31,6 @@ from app.components.charts import (
     create_sector_bar_chart, create_cashflow_chart, create_property_type_donut,
     create_geography_bar, create_account_breakdown_donut
 )
-from app.components.tables import (
-    create_top_holdings_table, create_holdings_table, create_transactions_table,
-    create_quarterly_snapshot
-)
 
 # Page configuration
 st.set_page_config(
