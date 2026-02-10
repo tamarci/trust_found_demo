@@ -10,47 +10,24 @@ __pycache__/
 *.so
 .Python
 
+# Node.js
+node_modules/
+.next/
+out/
+.vercel
+*.log
+
 # Distribution / packaging
-.Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
 
 # Environments
 .env
-.venv
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # IDEs
 .vscode/
@@ -65,5 +42,3 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
-
-# Keep .streamlit/config.toml for deployment!
