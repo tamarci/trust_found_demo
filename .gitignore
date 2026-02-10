@@ -1,5 +1,7 @@
 # Virtual Environment
 venv/
+env/
+ENV/
 
 # Python
 __pycache__/
@@ -49,8 +51,6 @@ coverage.xml
 # Environments
 .env
 .venv
-ENV/
-env/
 
 # IDEs
 .vscode/
@@ -62,3 +62,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Keep .streamlit/config.toml for deployment!
