@@ -7,8 +7,9 @@ A premium wealth management dashboard for portfolio visualization and analysis.
 from datetime import datetime, timedelta
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import traceback
+
+# No external chart libraries needed - using Streamlit's built-in charts
 
 # Page configuration - MUST be first Streamlit command
 st.set_page_config(
@@ -43,11 +44,7 @@ try:
         get_top_holdings, calculate_cash_percentage, generate_insights
     )
     from app.services.translations import t
-    from app.components.charts import (
-        create_allocation_donut, create_nav_line_chart, create_region_bar_chart,
-        create_sector_bar_chart, create_property_type_donut,
-        create_geography_bar, create_account_breakdown_donut
-    )
+    # Don't import charts - they have plotly dependencies
     IMPORTS_OK = True
 except Exception as e:
     st.error(f"Import Error: {str(e)}")
@@ -255,23 +252,24 @@ with tab1:
             
             st.divider()
             
-            # Charts
+            # Charts - Simple visualizations without plotly
             col1, col2 = st.columns([2, 3])
             
             with col1:
                 st.markdown("#### Asset Allocation")
                 try:
                     allocation = calculate_asset_allocation(filtered_holdings)
-                    fig = create_allocation_donut(allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    # Simple bar chart with Streamlit
+                    st.bar_chart(allocation.set_index('asset_type')['percentage'])
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
             with col2:
                 st.markdown("#### Portfolio Value Over Time")
                 try:
-                    fig = create_nav_line_chart(filtered_nav)
-                    st.plotly_chart(fig, use_container_width=True)
+                    # Simple line chart with Streamlit
+                    nav_chart_data = filtered_nav.set_index('date')['value']
+                    st.line_chart(nav_chart_data)
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
@@ -300,8 +298,7 @@ with tab2:
                 st.markdown("#### Sector Allocation")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    fig = create_sector_bar_chart(sector_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(sector_allocation.set_index('sector')['percentage'])
                 except Exception as e:
                     st.warning(f"Sector chart unavailable: {str(e)}")
             
@@ -309,8 +306,7 @@ with tab2:
                 st.markdown("#### Region Allocation")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    fig = create_region_bar_chart(region_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(region_allocation.set_index('region')['percentage'])
                 except Exception as e:
                     st.warning(f"Region chart unavailable: {str(e)}")
             
@@ -349,25 +345,22 @@ with tab3:
             
             st.divider()
             
-            # Sankey diagram
+            # Ownership Structure - Simple visualization
             st.markdown("#### Company Ownership Structure")
             try:
-                client_name = client.get("name", "Client")
-                node_labels = [client_name] + [c["name"] for c in companies]
-                node_colors = ["#1a365d"] + ["#38a169" if c.get("ownership_percentage", 0) >= 50 else "#3182ce" for c in companies]
+                # Create a simple bar chart of ownership percentages
+                ownership_df = pd.DataFrame(companies)
+                ownership_df = ownership_df.sort_values('ownership_percentage', ascending=True)
                 
-                sources = [0] * len(companies)
-                targets = list(range(1, len(companies) + 1))
-                values = [c.get("ownership_percentage", 0) for c in companies]
-                
-                fig = go.Figure(data=[go.Sankey(
-                    node=dict(pad=20, thickness=30, label=node_labels, color=node_colors),
-                    link=dict(source=sources, target=targets, value=values)
-                )])
-                fig.update_layout(height=500)
-                st.plotly_chart(fig, use_container_width=True)
+                # Display as horizontal bars
+                for _, company in ownership_df.iterrows():
+                    pct = company.get('ownership_percentage', 0)
+                    color = "🟢" if pct >= 50 else "🔵" if pct >= 25 else "⚪"
+                    st.write(f"{color} **{company['name']}**: {pct:.1f}%")
+                    st.progress(pct / 100)
+                    
             except Exception as e:
-                st.warning(f"Ownership chart unavailable: {str(e)}")
+                st.warning(f"Ownership visualization unavailable: {str(e)}")
                 
     except Exception as e:
         st.error(f"Ownership tab error: {str(e)}")
@@ -421,8 +414,7 @@ with tab5:
                 st.markdown("##### Sector Distribution")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    fig = create_sector_bar_chart(sector_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(sector_allocation.set_index('sector')['percentage'])
                 except:
                     st.info("Sector data not available")
             
@@ -430,8 +422,7 @@ with tab5:
                 st.markdown("##### Region Distribution")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    fig = create_region_bar_chart(region_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(region_allocation.set_index('region')['percentage'])
                 except:
                     st.info("Region data not available")
                     
