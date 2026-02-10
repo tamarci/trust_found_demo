@@ -7,8 +7,16 @@ A premium wealth management dashboard for portfolio visualization and analysis.
 from datetime import datetime, timedelta
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import traceback
+
+# Lazy import plotly to avoid Streamlit Cloud issues
+def get_plotly():
+    try:
+        import plotly.graph_objects as go
+        return go
+    except ImportError:
+        st.error("Plotly not available. Install with: pip install plotly")
+        return None
 
 # Page configuration - MUST be first Streamlit command
 st.set_page_config(
@@ -352,20 +360,24 @@ with tab3:
             # Sankey diagram
             st.markdown("#### Company Ownership Structure")
             try:
-                client_name = client.get("name", "Client")
-                node_labels = [client_name] + [c["name"] for c in companies]
-                node_colors = ["#1a365d"] + ["#38a169" if c.get("ownership_percentage", 0) >= 50 else "#3182ce" for c in companies]
-                
-                sources = [0] * len(companies)
-                targets = list(range(1, len(companies) + 1))
-                values = [c.get("ownership_percentage", 0) for c in companies]
-                
-                fig = go.Figure(data=[go.Sankey(
-                    node=dict(pad=20, thickness=30, label=node_labels, color=node_colors),
-                    link=dict(source=sources, target=targets, value=values)
-                )])
-                fig.update_layout(height=500)
-                st.plotly_chart(fig, use_container_width=True)
+                go = get_plotly()
+                if go:
+                    client_name = client.get("name", "Client")
+                    node_labels = [client_name] + [c["name"] for c in companies]
+                    node_colors = ["#1a365d"] + ["#38a169" if c.get("ownership_percentage", 0) >= 50 else "#3182ce" for c in companies]
+                    
+                    sources = [0] * len(companies)
+                    targets = list(range(1, len(companies) + 1))
+                    values = [c.get("ownership_percentage", 0) for c in companies]
+                    
+                    fig = go.Figure(data=[go.Sankey(
+                        node=dict(pad=20, thickness=30, label=node_labels, color=node_colors),
+                        link=dict(source=sources, target=targets, value=values)
+                    )])
+                    fig.update_layout(height=500)
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Chart visualization requires plotly")
             except Exception as e:
                 st.warning(f"Ownership chart unavailable: {str(e)}")
                 
