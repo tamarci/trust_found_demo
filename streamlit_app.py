@@ -51,11 +51,7 @@ try:
         get_top_holdings, calculate_cash_percentage, generate_insights
     )
     from app.services.translations import t
-    from app.components.charts import (
-        create_allocation_donut, create_nav_line_chart, create_region_bar_chart,
-        create_sector_bar_chart, create_property_type_donut,
-        create_geography_bar, create_account_breakdown_donut
-    )
+    # Charts imported lazily to avoid plotly import issues
     IMPORTS_OK = True
 except Exception as e:
     st.error(f"Import Error: {str(e)}")
@@ -270,16 +266,17 @@ with tab1:
                 st.markdown("#### Asset Allocation")
                 try:
                     allocation = calculate_asset_allocation(filtered_holdings)
-                    fig = create_allocation_donut(allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    # Simple bar chart instead of donut
+                    st.bar_chart(allocation.set_index('asset_type')['value'])
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
             with col2:
                 st.markdown("#### Portfolio Value Over Time")
                 try:
-                    fig = create_nav_line_chart(filtered_nav)
-                    st.plotly_chart(fig, use_container_width=True)
+                    # Simple line chart
+                    if 'date' in filtered_nav.columns and 'value' in filtered_nav.columns:
+                        st.line_chart(filtered_nav.set_index('date')['value'])
                 except Exception as e:
                     st.error(f"Chart error: {str(e)}")
             
@@ -308,8 +305,7 @@ with tab2:
                 st.markdown("#### Sector Allocation")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    fig = create_sector_bar_chart(sector_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(sector_allocation.set_index('sector')['value'])
                 except Exception as e:
                     st.warning(f"Sector chart unavailable: {str(e)}")
             
@@ -317,8 +313,7 @@ with tab2:
                 st.markdown("#### Region Allocation")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    fig = create_region_bar_chart(region_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(region_allocation.set_index('region')['value'])
                 except Exception as e:
                     st.warning(f"Region chart unavailable: {str(e)}")
             
@@ -357,29 +352,23 @@ with tab3:
             
             st.divider()
             
-            # Sankey diagram
-            st.markdown("#### Company Ownership Structure")
+            # Ownership table
+            st.markdown("#### Company Ownership Details")
             try:
-                go = get_plotly()
-                if go:
-                    client_name = client.get("name", "Client")
-                    node_labels = [client_name] + [c["name"] for c in companies]
-                    node_colors = ["#1a365d"] + ["#38a169" if c.get("ownership_percentage", 0) >= 50 else "#3182ce" for c in companies]
-                    
-                    sources = [0] * len(companies)
-                    targets = list(range(1, len(companies) + 1))
-                    values = [c.get("ownership_percentage", 0) for c in companies]
-                    
-                    fig = go.Figure(data=[go.Sankey(
-                        node=dict(pad=20, thickness=30, label=node_labels, color=node_colors),
-                        link=dict(source=sources, target=targets, value=values)
-                    )])
-                    fig.update_layout(height=500)
-                    st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("Chart visualization requires plotly")
+                company_data = []
+                for company in companies:
+                    company_data.append({
+                        'Company': company['name'],
+                        'Ownership %': f"{company.get('ownership_percentage', 0):.1f}%",
+                        'Status': '🟢 Controlled' if company.get('ownership_percentage', 0) >= 50 else '🔵 Minority'
+                    })
+                
+                if company_data:
+                    import pandas as pd
+                    df = pd.DataFrame(company_data)
+                    st.dataframe(df, use_container_width=True, hide_index=True)
             except Exception as e:
-                st.warning(f"Ownership chart unavailable: {str(e)}")
+                st.warning(f"Ownership data unavailable: {str(e)}")
                 
     except Exception as e:
         st.error(f"Ownership tab error: {str(e)}")
@@ -433,8 +422,7 @@ with tab5:
                 st.markdown("##### Sector Distribution")
                 try:
                     sector_allocation = calculate_sector_allocation(filtered_holdings)
-                    fig = create_sector_bar_chart(sector_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(sector_allocation.set_index('sector')['value'])
                 except:
                     st.info("Sector data not available")
             
@@ -442,8 +430,7 @@ with tab5:
                 st.markdown("##### Region Distribution")
                 try:
                     region_allocation = calculate_region_allocation(filtered_holdings)
-                    fig = create_region_bar_chart(region_allocation)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.bar_chart(region_allocation.set_index('region')['value'])
                 except:
                     st.info("Region data not available")
                     

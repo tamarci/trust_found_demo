@@ -1,7 +1,6 @@
 # SQN Trust Portfolio Dashboard - Streamlit Version
-# Python 3.10+
+# Minimal dependencies for fast deployment
 
 streamlit==1.31.0
-plotly==5.24.1
 pandas==2.1.4
 numpy==1.26.2
